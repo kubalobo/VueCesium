@@ -1,51 +1,48 @@
 <template>
     <el-table
-        :data="tableData"
+        ref="tableee"
+        :data="this.polygons"
         style="width: 100%"
         highlight-current-row
         @current-change="handleCurrentChange"
     >
-        <el-table-column type="index"> </el-table-column>
-        <el-table-column prop="date" label="Date" width="180">
+        <el-table-column> </el-table-column>
+        <el-table-column prop="id" label="ID" width="80"> </el-table-column>
+        <el-table-column prop="name" label="Name" width="300">
         </el-table-column>
-        <el-table-column prop="name" label="Name" width="180">
-        </el-table-column>
-        <el-table-column prop="address" label="Address"> </el-table-column>
     </el-table>
 </template>
 
 <script>
 export default {
     name: 'TestTable',
+    props: {
+        polygons: Array,
+        selected: String
+    },
     data() {
         return {
-            tableData: [
-                {
-                    date: '2016-05-03',
-                    name: 'Tom',
-                    address: 'No. 189, Grove St, Los Angeles'
-                },
-                {
-                    date: '2016-05-02',
-                    name: 'Tom',
-                    address: 'No. 189, Grove St, Los Angeles'
-                },
-                {
-                    date: '2016-05-04',
-                    name: 'Tom',
-                    address: 'No. 189, Grove St, Los Angeles'
-                },
-                {
-                    date: '2016-05-01',
-                    name: 'Tom',
-                    address: 'No. 189, Grove St, Los Angeles'
-                }
-            ]
+            currentRow: null
         }
     },
+    watch: {
+        selected(val) {
+            console.log('Table watcher: ' + val)
+            if (this.currentRow.id !== val) {
+                this.setCurrent(this.polygons[val])
+            }
+        }
+    },
+    mounted() {
+        this.setCurrent(this.selected)
+    },
     methods: {
-        handleCurrentChange(val) {
-            console.log(val)
+        handleCurrentChange(currentRow, oldCurrentRow) {
+            this.currentRow = currentRow
+            if (currentRow.id) this.$emit('polygonChanged', currentRow.id)
+        },
+        setCurrent(row) {
+            this.$refs.tableee.setCurrentRow(row)
         }
     }
 }
